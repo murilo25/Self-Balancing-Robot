@@ -14,7 +14,7 @@ function [xdot] = FixedInvertedPend(t,x,L,m,g,J,max_tau)
     e = theta_target - x(1);
     e_dot = theta_target_dot - x(2);
     %% Compute control input
-    tau = L*m*g*x(1) + J*(Kd*e_dot + Kp*e);
+    tau = L*m*g*x(1) - J*(Kd*e_dot + Kp*e);
     % saturate control input
     if (tau > max_tau) 
         tau = 100;
@@ -27,7 +27,7 @@ function [xdot] = FixedInvertedPend(t,x,L,m,g,J,max_tau)
     tau_history(iter) = tau;
     ode_t(iter) = t;
 
-    xdot = [x(2) ; L*m*g/J*x(1) + (1/J)*tau];
+    xdot = [x(2) ; L*m*g/J*x(1) - (1/J)*tau];
 
 end
 
