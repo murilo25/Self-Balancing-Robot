@@ -7,8 +7,8 @@ function [xdot] = FixedInvertedPend(t,x,L,m,g,J,max_tau)
     theta_target_dot = 0;
 
     %% Define controller gains
-    Kp = 10;
-    Kd = 10;
+    Kp = 20;
+    Kd = 20;
 
     %% Define error
     e = theta_target - x(1);
@@ -27,7 +27,7 @@ function [xdot] = FixedInvertedPend(t,x,L,m,g,J,max_tau)
     tau_history(iter) = tau;
     ode_t(iter) = t;
 
-    xdot = [x(2) ; L*m*g/J*x(2) + (1/J)*tau];
+    xdot = [x(2) ; L*m*g/J*x(1) + (1/J)*tau];
 
 end
 
