@@ -24,7 +24,7 @@ J = (m*L^2)/3;
 max_tau = 100;
 
 %% Set initial conditions
-x0 = [-0.0625 ; 0];  % stable for initial angles in between 0.-625 and 0.625
+x0 = [-0.0625 ; 0];  % stable for initial angles in between -0.625 and 0.625
 t_sim = 0:dt:10;
 
 %% Solve dynamics
