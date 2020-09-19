@@ -7,8 +7,8 @@ function [xdot] = FixedInvertedPend(t,x,L,m,g,J,max_tau)
     theta_target_dot = 0;
 
     %% Define controller gains
-    Kp = 20;
-    Kd = 20;
+    Kp = 10;
+    Kd = 10;
 
     %% Define error
     e = theta_target - x(1);
@@ -17,9 +17,9 @@ function [xdot] = FixedInvertedPend(t,x,L,m,g,J,max_tau)
     tau = L*m*g*x(1) - J*(Kd*e_dot + Kp*e);
     % saturate control input
     if (tau > max_tau) 
-        tau = 100;
+        tau = max_tau;
     elseif (tau < -max_tau)
-        tau = -100;
+        tau = -max_tau;
     end
     
     %% Store control input and time history
