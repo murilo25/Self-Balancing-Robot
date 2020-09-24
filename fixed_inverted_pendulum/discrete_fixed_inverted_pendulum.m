@@ -18,6 +18,11 @@ m = 0.2;
 g = 9.8;
 J = (m*L^2)/3;
 max_tau = 10;
+% sensor parameters
+mu_theta = 0;
+var_theta = 2 * pi/180; % 2 degrees
+mu_theta_dot = 0;
+var_theta_dot = 1 * pi/180; % 1 degree/s
 
 %% Define simulation parameters
 t_sim = 1;
@@ -25,7 +30,7 @@ k = 1;  % k-th sample
 n_samples = t_sim/dt;
 
 %% Initialize variables
-states = zeros(n_samples,2);
+ground_truth = zeros(n_samples,2);
 x = zeros(n_samples,1);
 y = zeros(n_samples,1);
 theta = zeros(n_samples,1);
@@ -39,8 +44,10 @@ t = zeros(n_samples,1);
 %% Set initial conditions
 theta(1) = pi/3;    % stable for initial angles in between -0.625 and 0.625
 theta_dot(1) = 0;
-x(1) = L*cos(pi/2 - theta(k));
-y(1) = L*sin(pi/2 - theta(k));
+x(1) = L*cos(pi/2 - theta(1));
+y(1) = L*sin(pi/2 - theta(1));
+ground_truth(1,:) = [theta(1) theta_dot(1)];
+
 %% Define PD controller gains
 Kp = 25;
 Kd = 0; % Kd makes system oscillate
@@ -85,6 +92,11 @@ while k*dt <= t_sim
         theta_dot(k+1) = 0;
     end
     
+    ground_truth(k + 1,:) = [theta(k + 1) theta_dot(k + 1)];
+    % add sensor noise
+    theta(k + 1) = theta(k + 1) + ( mu_theta + var_theta*randn(1) );
+    theta_dot(k + 1) = theta_dot(k + 1) + ( mu_theta_dot + var_theta_dot*randn(1) );
+    
     t(k) = k*dt;
     k = k + 1;  % update to next step
 end
@@ -94,10 +106,14 @@ subplot(2,1,1)
 plot(t',theta*180/pi)   % plot in degrees
 hold on
 plot(t',theta_dot)
+hold on
+plot(t',(180/pi)*ground_truth(:,1),'b:')
+hold on
+plot(t',ground_truth(:,2),'r:')
 title('State trajectories')
 ylabel('states')
 xlabel('time [s]')
-legend('angle [degrees]','angular velocity [rad/s]')
+legend('angle [degrees]','angular velocity [rad/s]','Real angle','Real angular velocity')
 
 subplot(2,1,2)
 plot(x,y,'o')
